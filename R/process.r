@@ -21,19 +21,18 @@ process_recipients <- function(x) {
 }
 
 process_attachments <- function(x) {
-  y <-  grep("/__attach_version1.0_", names(x), value=TRUE)
-  z <- sapply(y, strsplit, split = "/", fixed=TRUE, USE.NAMES = FALSE)
-  z <- sprintf("/%s", unique(sapply(z, `[`, 2)))
+  y <- grep(paste0("^/__attach_version1.*", msg_fields$AttachFilename), names(x), value=TRUE)
+  z <- regmatches(y, regexpr("^/__.*/", y))
   lapply(z, function(r) {
-    attachmnt <- x[grep(sprintf("^%s", r), names(x), value=TRUE)]
+    attachmnt <- x[grep(paste0("^", r, "__substg1.0_[0-9A-F]{8}$"), names(x), value = TRUE)]
     list(
       filename = unlist(unname(x[grep(msg_fields$AttachFilename, names(attachmnt), value=TRUE)])),
       long_filename = unlist(unname(x[grep(msg_fields$AttachLongFilename, names(attachmnt), value=TRUE)])),
       mime = unlist(unname(x[grep(msg_fields$AttachMIME, names(attachmnt), value=TRUE)])),
-      content = unlist(unname(x[grep(msg_fields$AttachContent, names(attachmnt), value=TRUE)]))
+      content = unlist(unname(x[grep(msg_fields$AttachContent, names(attachmnt), value=TRUE)])),
+      extension = unlist(unname(x[grep(msg_fields$AttachExtension, names(attachmnt), value=TRUE)]))
     ) -> res
-    extension <- unlist(unname(x[grep(msg_fields$AttachExtension, names(attachmnt), value=TRUE)]))
-    if (!is.null(extension)) res$extension <- extension
+    res[sapply(res, is.null)] <- NA
     res
   })
 }
