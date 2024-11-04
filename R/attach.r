@@ -33,6 +33,21 @@ save_attachments <- function(msg_obj, path=getwd(), use_short=TRUE, quiet=FALSE)
       out_path <- path.expand(path)
       out_path <- file.path(out_path, fn)
 
+      ## works for now, clean up later
+      if(file.exists(out_path)) {
+      i <- 1
+      ext <- tools::file_ext(out_path)
+      file <- tools::file_path_sans_ext(out_path)
+      new_path <- paste0(file, "_", i, ".", ext)
+
+        while(file.exists(new_path)) {
+          i <- i + 1
+          new_path <- paste0(file, "_", i, ".", ext)
+        }
+      out_path <- new_path
+      }
+      ##
+
       if (!quiet) message(sprintf("Saving %s (%s bytes)", out_path,
                                   scales::comma(length(a$content))))
 
