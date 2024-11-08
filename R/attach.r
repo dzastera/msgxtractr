@@ -53,7 +53,7 @@ save_attachments <- function(msg_obj, path=getwd(), use_short=TRUE, quiet=FALSE)
 
       writeBin(a$content, con = out_path)
 
-      out <- c(out, out_path)
+      #out <- c(out, out_path)
 
     }
 
